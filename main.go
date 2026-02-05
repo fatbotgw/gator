@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fatbotgw/gator/internal/config"
+	"github.com/fatbotgw/gator/internal/commands"
 )
 
 func main()  {
