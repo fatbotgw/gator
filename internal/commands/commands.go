@@ -6,24 +6,25 @@ import (
 	"github.com/fatbotgw/gator/internal/config"
 )
 
-type state struct {
-	cfg *config.Config
+type State struct {
+	Cfg config.Config
 }
 
-type command struct {
-	name      string
-	arguments []string
+type Command struct {
+	Name      string
+	Arguments []string
 }
 
-type commands struct {
-	handlers map[string]func(*state, command) error
+type Commands struct {
+	Handlers map[string]func(*State, Command) error
 }
 
-func handlerLogin(s *state, cmd command) error {
-	if cmd.arguments == nil {
+func HandlerLogin(s *State, cmd Command) error {
+	if len(cmd.Arguments) == 0 {
 		return fmt.Errorf("ERROR: Command missing arguments.")
 	}
-	err := config.SetUser(*s.cfg)
+	username := cmd.Arguments[0]
+	err := s.Cfg.SetUser(username)
 	if err != nil {
 		return err
 	}
@@ -32,16 +33,15 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 // This method registers a new handler function for a command name.
-func (c *commands) register(name string, f func(*state, command) error) {
-	c.handlers[name] = f
+func (c *Commands) Register(name string, f func(*State, Command) error) {
+	c.Handlers[name] = f
 }
 
 // This method runs a given command with the provided state if it exists.
-func (c *commands) run(s *state, cmd command) error {
-	handler, ok := c.handlers[cmd.name]
+func (c *Commands) Run(s *State, cmd Command) error {
+	handler, ok := c.Handlers[cmd.Name]
 	if !ok {
-		return fmt.Errorf("command not found: %s", cmd.name)
+		return fmt.Errorf("command not found: %s", cmd.Name)
 	}
 	return handler(s, cmd)
 }
-

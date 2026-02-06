@@ -1,20 +1,38 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
 
-	"github.com/fatbotgw/gator/internal/config"
 	"github.com/fatbotgw/gator/internal/commands"
+	"github.com/fatbotgw/gator/internal/config"
 )
 
 func main()  {
 	gatorConfig := config.Read()
-	// fmt.Printf("Initial Config: %v\n", gatorConfig)
 
-	// write username to config file
-	config.SetUser(gatorConfig)
+	progState := &commands.State{
+		Cfg: gatorConfig,
+	}
+	comMap := commands.Commands{
+		Handlers: make(map[string]func(*commands.State, commands.Command) error),
+	}
 
-	// read config file again and print to console
-	gatorConfig = config.Read()
-	fmt.Printf("Config: %v\n", gatorConfig)
+	comMap.Register("login", commands.HandlerLogin)
+	
+	if len(os.Args) < 2 {
+		log.Fatal("not enough arguments")
+	}
+
+	comName := os.Args[1]
+	comArgs := os.Args[2:]
+
+	cmd := commands.Command{
+		Name: comName,
+		Arguments: comArgs,
+	}
+
+	if err := comMap.Run(progState, cmd); err != nil {
+		log.Fatal(err)
+	}
 }

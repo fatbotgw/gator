@@ -3,10 +3,8 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-
-	// "io"
 	"os"
-	"os/user"
+	// "os/user"
 	"path/filepath"
 )
 
@@ -20,7 +18,6 @@ type Config struct {
 func Read() Config {
 	// reads the JSON file found at ~/.gatorconfig.json and returns a Config struct
 	file, err := getConfigFilePath()
-	// fmt.Printf("Loading config file from: %v\n", file)
 	if err != nil {
 		fmt.Println("Error on filepath")
 		return Config{}
@@ -39,16 +36,21 @@ func Read() Config {
 	return data
 }
 
-func SetUser(c Config) error {
-	// writes the config struct to the JSON file after setting current_user_name
-	currentUser, err := user.Current()
-	if err != nil {
-		return err
-	}
-	c.CurrentUser = currentUser.Username
-	write(c)
-	return nil
+func (cfg *Config) SetUser(userName string) error {
+    cfg.CurrentUser = userName
+    return write(*cfg)
 }
+
+// func SetUser(c Config) error {
+// 	// writes the config struct to the JSON file after setting current_user_name
+// 	currentUser, err := user.Current()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	c.CurrentUser = currentUser.Username
+// 	write(c)
+// 	return nil
+// }
 
 func getConfigFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
