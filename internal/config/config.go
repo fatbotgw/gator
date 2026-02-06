@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	// "os/user"
 	"path/filepath"
 )
 
@@ -40,17 +39,6 @@ func (cfg *Config) SetUser(userName string) error {
     cfg.CurrentUser = userName
     return write(*cfg)
 }
-
-// func SetUser(c Config) error {
-// 	// writes the config struct to the JSON file after setting current_user_name
-// 	currentUser, err := user.Current()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	c.CurrentUser = currentUser.Username
-// 	write(c)
-// 	return nil
-// }
 
 func getConfigFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
