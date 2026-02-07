@@ -4,21 +4,20 @@ import (
 	"log"
 	"os"
 
-	"github.com/fatbotgw/gator/internal/commands"
 	"github.com/fatbotgw/gator/internal/config"
 )
 
 func main()  {
 	gatorConfig := config.Read()
 
-	progState := &commands.State{
+	progState := &state{
 		Cfg: gatorConfig,
 	}
-	comMap := commands.Commands{
-		Handlers: make(map[string]func(*commands.State, commands.Command) error),
+	comMap := commands{
+		Handlers: make(map[string]func(*state, command) error),
 	}
 
-	comMap.Register("login", commands.HandlerLogin)
+	comMap.Register("login", handlerLogin)
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")
@@ -27,7 +26,7 @@ func main()  {
 	comName := os.Args[1]
 	comArgs := os.Args[2:]
 
-	cmd := commands.Command{
+	cmd := command{
 		Name: comName,
 		Arguments: comArgs,
 	}
