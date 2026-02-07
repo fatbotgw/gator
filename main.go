@@ -7,6 +7,10 @@ import (
 	"github.com/fatbotgw/gator/internal/config"
 )
 
+type state struct {
+	Cfg config.Config
+}
+
 func main()  {
 	gatorConfig := config.Read()
 

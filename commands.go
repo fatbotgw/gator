@@ -2,13 +2,7 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/fatbotgw/gator/internal/config"
 )
-
-type state struct {
-	Cfg config.Config
-}
 
 type command struct {
 	Name      string
@@ -17,19 +11,6 @@ type command struct {
 
 type commands struct {
 	Handlers map[string]func(*state, command) error
-}
-
-func handlerLogin(s *state, cmd command) error {
-	if len(cmd.Arguments) == 0 {
-		return fmt.Errorf("ERROR: Command missing arguments.")
-	}
-	username := cmd.Arguments[0]
-	err := s.Cfg.SetUser(username)
-	if err != nil {
-		return err
-	}
-	fmt.Println("Current user has been set.")
-	return nil
 }
 
 // This method registers a new handler function for a command name.
