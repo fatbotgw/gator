@@ -4,11 +4,13 @@ import (
 	"fmt"
 )
 
+// The struct for each command that will be registered
 type command struct {
 	Name      string
 	Arguments []string
 }
 
+// This struct holds a map of registered commands
 type commands struct {
 	Handlers map[string]func(*state, command) error
 }
