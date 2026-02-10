@@ -1,27 +1,47 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/fatbotgw/gator/internal/config"
+	"github.com/fatbotgw/gator/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
+// type state struct {
+// 	cfg config.Config
+// }
+
 type state struct {
-	Cfg config.Config
+	db  *database.Queries
+	cfg *config.Config
 }
 
 func main()  {
 	gatorConfig := config.Read()
 
+	dbURL := gatorConfig.Database
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbQueries := database.New(db)
+
+
 	progState := &state{
-		Cfg: gatorConfig,
+		db: dbQueries,
+		cfg: &gatorConfig,
 	}
 	comMap := commands{
 		Handlers: make(map[string]func(*state, command) error),
 	}
 
 	comMap.Register("login", handlerLogin)
+	comMap.Register("register", handlerRegister)
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")
