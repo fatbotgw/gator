@@ -42,6 +42,7 @@ func main()  {
 
 	comMap.Register("login", handlerLogin)
 	comMap.Register("register", handlerRegister)
+	comMap.Register("reset", handlerReset)
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")
