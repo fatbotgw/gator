@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"html"
+	"time"
 )
 
 type RSSFeed struct {
@@ -25,29 +27,41 @@ type RSSItem struct {
 }
 
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
-	fmt.Printf("Getting feed: %v\n", feedURL)
-	res, err := http.Get(feedURL)
-	if err != nil {
-		return &RSSFeed{}, err
+
+	httpClient := http.Client{
+		Timeout: 10 * time.Second,
 	}
+	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", "gator")
+	res, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		return &RSSFeed{}, err
 	}
-	fmt.Printf("***BODY:\n%v\n", body)
 
 	var feed RSSFeed
-	if err = xml.Unmarshal(body, &feed.Channel); err != nil {
+	if err = xml.Unmarshal(body, &feed); err != nil {
 		return &RSSFeed{}, err
 	}
-	fmt.Printf("***Unmarshaled:\n%v\n", feed)
-	for _, feedItem := range feed.Channel.Item {
-		fmt.Println(feedItem)
+
+	feed.Channel.Title = html.UnescapeString(feed.Channel.Title)
+	feed.Channel.Description = html.UnescapeString(feed.Channel.Description)
+	for i := range feed.Channel.Item {
+	    feed.Channel.Item[i].Title = html.UnescapeString(feed.Channel.Item[i].Title)
+	    feed.Channel.Item[i].Description = html.UnescapeString(feed.Channel.Item[i].Description)
 	}
+
 	return &feed, nil
-	// return &RSSFeed{}, nil
 }
 
 // This will be the long-running aggregator server. Initially, it only fetches
@@ -55,7 +69,11 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 func handlerFeed(s *state, cmd command) error {
 	address := "https://www.wagslane.dev/index.xml"
 
-	fetchFeed(context.Background(), address)
+	res, err := fetchFeed(context.Background(), address)
+	if err != nil {
+		return err
+	}
 
+	fmt.Println(res)
 	return nil
 }
