@@ -66,7 +66,7 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 
 // This will be the long-running aggregator server. Initially, it only fetches
 // a single feed to ensure the parsing works.
-func handlerFeed(s *state, cmd command) error {
+func handlerAgg(s *state, cmd command) error {
 	address := "https://www.wagslane.dev/index.xml"
 
 	res, err := fetchFeed(context.Background(), address)
