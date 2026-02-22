@@ -43,12 +43,13 @@ func handlerAddFeed(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%v", feedRow)
 	printFeed(feed)
+	fmt.Printf("\n%v is now following %v\n", feedRow.UserName, feedRow.FeedName)
 	return nil
 }
 
 func printFeed(feed database.Feed) {
+	fmt.Println("Adding Feed:")
 	fmt.Printf("* ID:            %s\n", feed.ID)
 	fmt.Printf("* Created:       %v\n", feed.CreatedAt)
 	fmt.Printf("* Updated:       %v\n", feed.UpdatedAt)
