@@ -45,7 +45,7 @@ func main()  {
 	comMap.Register("reset", handlerReset)
 	comMap.Register("users", handlerUsers)
 	comMap.Register("agg", handlerAgg)
-	comMap.Register("addfeed", handlerFeed)
+	comMap.Register("addfeed", handlerAddFeed)
 	comMap.Register("feeds", handlerFeeds)
 	comMap.Register("follow", follow)
 	comMap.Register("following", following)
