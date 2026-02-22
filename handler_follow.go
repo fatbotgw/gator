@@ -23,11 +23,13 @@ func follow(s *state, cmd command) error {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		UserID:    currentUser.ID,
-		FeedID:    feedName.UserID,
+		FeedID:    feedName.ID,
 	}
-	fmt.Println(followedFeed)
-	// printFollowedFeed(followedFeed)
-	//CreateFeedFollow()
+	followRow, err := s.db.CreateFeedFollow(context.Background(), followedFeed)
+	if err != nil {
+		return err
+	}
+	printFollowedFeed(followRow)
 	return nil
 }
 
@@ -36,6 +38,21 @@ func printFollowedFeed(feed database.CreateFeedFollowRow) {
 	fmt.Printf("* Created:       %v\n", feed.CreatedAt)
 	fmt.Printf("* Updated:       %v\n", feed.UpdatedAt)
 	fmt.Printf("* Name:          %s\n", feed.FeedName)
-	fmt.Printf("* URL:           %s\n", feed.FeedName)
 	fmt.Printf("* UserID:        %s\n", feed.UserID)
+}
+
+func following(s *state, cmd command) error {
+	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
+	if err != nil {
+		return err
+	}
+	feedList, err := s.db.GetFeedFollowsForUser(context.Background(), currentUser.ID)
+	if err != nil {
+		return err
+	}
+	for _, feed := range feedList {
+		fmt.Println(feed.FeedName)
+	}
+
+	return nil
 }

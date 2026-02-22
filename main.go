@@ -48,6 +48,7 @@ func main()  {
 	comMap.Register("addfeed", handlerFeed)
 	comMap.Register("feeds", handlerFeeds)
 	comMap.Register("follow", follow)
+	comMap.Register("following", following)
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")

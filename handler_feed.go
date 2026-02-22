@@ -15,20 +15,35 @@ func handlerFeed(s *state, cmd command) error {
 	}
 	curUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
 
+	feed_ID := uuid.New()
+	created := time.Now()
+	updated := time.Now()
+
 	newFeed := database.CreateFeedParams{
-		ID: uuid.New(),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		Name: cmd.Arguments[0],
-		Url: cmd.Arguments[1],
-		UserID: curUser.ID,
+		ID: 		feed_ID,
+		CreatedAt:	created,
+		UpdatedAt:	updated,
+		Name: 		cmd.Arguments[0],
+		Url: 		cmd.Arguments[1],
+		UserID: 	curUser.ID,
 	}
 	
 	feed, err := s.db.CreateFeed(context.Background(), newFeed)
 	if err != nil {
 		return err
 	}
-
+	followedFeed := database.CreateFeedFollowParams{
+		ID:		uuid.New(),
+		CreatedAt: 	created,
+		UpdatedAt: 	updated,
+		UserID: 	curUser.ID,
+		FeedID: 	feed_ID,
+	}
+	feedRow, err := s.db.CreateFeedFollow(context.Background(), followedFeed)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%v", feedRow)
 	printFeed(feed)
 	return nil
 }
