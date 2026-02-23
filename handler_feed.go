@@ -44,7 +44,8 @@ func handlerAddFeed(s *state, cmd command) error {
 		return err
 	}
 	printFeed(feed)
-	fmt.Printf("\n%v is now following %v\n", feedRow.UserName, feedRow.FeedName)
+	fmt.Println("\nFeed followed successfully:")
+	fmt.Printf("%v is now following %v\n", feedRow.UserName, feedRow.FeedName)
 	return nil
 }
 

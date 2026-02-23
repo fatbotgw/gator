@@ -30,7 +30,8 @@ func follow(s *state, cmd command) error {
 		return err
 	}
 	printFollowedFeed(followRow)
-	fmt.Printf("\n%v is now following %v", followRow.UserName, followRow.FeedName)
+	fmt.Println("\nFeed followed successfully:")
+	fmt.Printf("%v is now following %v", followRow.UserName, followRow.FeedName)
 	return nil
 }
 
