@@ -9,11 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Arguments) < 2 {
 		return fmt.Errorf("ERROR: Command missing arguments")
 	}
-	curUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
 
 	feed_ID := uuid.New()
 	created := time.Now()
@@ -25,7 +24,7 @@ func handlerAddFeed(s *state, cmd command) error {
 		UpdatedAt:	updated,
 		Name: 		cmd.Arguments[0],
 		Url: 		cmd.Arguments[1],
-		UserID: 	curUser.ID,
+		UserID: 	user.ID,
 	}
 	
 	feed, err := s.db.CreateFeed(context.Background(), newFeed)
@@ -36,7 +35,7 @@ func handlerAddFeed(s *state, cmd command) error {
 		ID:		uuid.New(),
 		CreatedAt: 	created,
 		UpdatedAt: 	updated,
-		UserID: 	curUser.ID,
+		UserID: 	user.ID,
 		FeedID: 	feed_ID,
 	}
 	feedRow, err := s.db.CreateFeedFollow(context.Background(), followedFeed)

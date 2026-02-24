@@ -9,11 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func follow(s *state, cmd command) error {
-	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
-	if err != nil {
-		return err
-	}
+func follow(s *state, cmd command, user database.User) error {
 	feedName, err := s.db.GetFeedNameByURL(context.Background(), cmd.Arguments[0])
 	if err != nil {
 		return err
@@ -22,7 +18,7 @@ func follow(s *state, cmd command) error {
 		ID: 	   uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		UserID:    currentUser.ID,
+		UserID:    user.ID,
 		FeedID:    feedName.ID,
 	}
 	followRow, err := s.db.CreateFeedFollow(context.Background(), followedFeed)
@@ -43,12 +39,8 @@ func printFollowedFeed(feed database.CreateFeedFollowRow) {
 	fmt.Printf("* UserID:        %s\n", feed.UserID)
 }
 
-func following(s *state, cmd command) error {
-	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
-	if err != nil {
-		return err
-	}
-	feedList, err := s.db.GetFeedFollowsForUser(context.Background(), currentUser.ID)
+func following(s *state, cmd command, user database.User) error {
+	feedList, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
 	if err != nil {
 		return err
 	}

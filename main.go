@@ -11,10 +11,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// type state struct {
-// 	cfg config.Config
-// }
-
 type state struct {
 	db  *database.Queries
 	cfg *config.Config
@@ -45,10 +41,14 @@ func main()  {
 	comMap.Register("reset", handlerReset)
 	comMap.Register("users", handlerUsers)
 	comMap.Register("agg", handlerAgg)
-	comMap.Register("addfeed", handlerAddFeed)
+	// comMap.Register("addfeed", handlerAddFeed)
 	comMap.Register("feeds", handlerFeeds)
-	comMap.Register("follow", follow)
-	comMap.Register("following", following)
+	// comMap.Register("follow", follow)
+	// comMap.Register("following", following)
+
+	comMap.Register("addfeed", middlewareLoggedIn(handlerAddFeed))
+	comMap.Register("follow", middlewareLoggedIn(follow))
+	comMap.Register("following", middlewareLoggedIn(following))
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")
