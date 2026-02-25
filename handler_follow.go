@@ -50,3 +50,20 @@ func following(s *state, cmd command, user database.User) error {
 
 	return nil
 }
+
+func unfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.Arguments) != 1 {
+		return fmt.Errorf("usage: %s <feed_url>", cmd.Name)
+	}
+	feed, err := s.db.GetFeedNameByURL(context.Background(), cmd.Arguments[0])
+	if err != nil {
+		return err
+	}
+	feedFollow := database.UnfollowFeedParams{
+		UserID: user.ID,
+		FeedID: feed.ID,
+	}
+	err = s.db.UnfollowFeed(context.Background(), feedFollow)
+	fmt.Printf("%s unfollowed successfully!\n", feed.Name)
+	return err
+}
