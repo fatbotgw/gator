@@ -77,3 +77,14 @@ func handlerAgg(s *state, cmd command) error {
 	fmt.Println(res)
 	return nil
 }
+
+func scrapeFeeds(s *state, ) error {
+	// Get the next feed to fetch from the DB.
+	
+	// Mark it as fetched.
+	
+	// Fetch the feed using the URL (we already wrote this function)
+	
+	// Iterate over the items in the feed and print their titles to the console.
+
+}
