@@ -56,7 +56,7 @@ UPDATE feeds
 SET last_fetched_at = now(), updated_at = now()
 WHERE id = $1;
 
--- name: GetNextFeedToFetch :exec
+-- name: GetNextFeedToFetch :one
 SELECT *
 FROM feeds
 ORDER BY last_fetched_at ASC NULLS FIRST

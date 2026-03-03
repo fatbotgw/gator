@@ -67,24 +67,40 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 // This will be the long-running aggregator server. Initially, it only fetches
 // a single feed to ensure the parsing works.
 func handlerAgg(s *state, cmd command) error {
-	address := "https://www.wagslane.dev/index.xml"
+	// address := "https://www.wagslane.dev/index.xml"
+	// address := "https://www.boot.dev/blog/index.xml"
 
-	res, err := fetchFeed(context.Background(), address)
+	// res, err := fetchFeed(context.Background(), address)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// fmt.Println(res)
+	// return nil
+
+	return scrapeFeeds(s)
+}
+
+func scrapeFeeds(s *state) error {
+	// Get the next feed to fetch from the DB.
+	feed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(res)
-	return nil
-}
-
-func scrapeFeeds(s *state, ) error {
-	// Get the next feed to fetch from the DB.
-	
 	// Mark it as fetched.
-	
+	err = s.db.MarkFeedFetched(context.Background(), feed.ID)
+	if err != nil {
+		return err
+	}
 	// Fetch the feed using the URL (we already wrote this function)
-	
+	feedData, err := fetchFeed(context.Background(), feed.Url)
+	if err != nil {
+		return err
+	}
 	// Iterate over the items in the feed and print their titles to the console.
+	for _, item := range feedData.Channel.Item {
+		fmt.Printf("Title: %v\n\n", item.Title)
+	}	
 
+	return nil
 }
