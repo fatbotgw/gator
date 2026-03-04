@@ -64,21 +64,25 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	return &feed, nil
 }
 
-// This will be the long-running aggregator server. Initially, it only fetches
-// a single feed to ensure the parsing works.
+// This is the long-running aggregator server.
 func handlerAgg(s *state, cmd command) error {
-	// address := "https://www.wagslane.dev/index.xml"
-	// address := "https://www.boot.dev/blog/index.xml"
+	// return scrapeFeeds(s)
+	if len(cmd.Arguments) < 1 {
+		return fmt.Errorf("ERROR: Command missing arguments")
+	}
 
-	// res, err := fetchFeed(context.Background(), address)
-	// if err != nil {
-	// 	return err
-	// }
+	time_between_reqs := cmd.Arguments[0]
 
-	// fmt.Println(res)
-	// return nil
-
-	return scrapeFeeds(s)
+	timeBetweenRequests, err := time.ParseDuration(time_between_reqs)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Collecting feeds every %v\n", timeBetweenRequests)
+	ticker := time.NewTicker(timeBetweenRequests)
+	for ; ; <-ticker.C {
+		fmt.Println("\n*** SCRAPING FEED ***\n")
+		scrapeFeeds(s)
+	}
 }
 
 func scrapeFeeds(s *state) error {
