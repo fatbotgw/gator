@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"html"
 	"time"
+
+	"github.com/fatbotgw/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -103,7 +106,29 @@ func scrapeFeeds(s *state) error {
 	}
 	// Iterate over the items in the feed and print their titles to the console.
 	for _, item := range feedData.Channel.Item {
-		fmt.Printf("Title: %v\n\n", item.Title)
+		// Examples of publish dates from RSS scrapes:
+		// Mon, 01 Jan 0001 00:00:00 +0000
+		// Wed, 10 Mar 2021 00:00:00 +0000
+		layout := "Mon, 01 Jan 0001 00:00:00 +0000"
+
+		date, _ := time.Parse(layout, item.PubDate)
+
+		// create a post for each item using the CreatePostParams struct
+		// and CreatePost() which inserts into db
+		post := database.CreatePostParams{
+			ID:			uuid.New(),
+			CreatedAt:	time.Now(),
+			UpdatedAt:	time.Now(),
+			Title:		item.Title,
+			Url:		item.Link,
+			Description:item.Description,
+			PublishedAt:date,
+			FeedID:		feed.ID,
+		}
+		_, err := s.db.CreatePost(context.Background(), post)
+		if err != nil {
+			return err
+		}
 	}	
 
 	return nil
