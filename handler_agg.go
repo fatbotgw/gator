@@ -109,7 +109,7 @@ func scrapeFeeds(s *state) error {
 		// Examples of publish dates from RSS scrapes:
 		// Mon, 01 Jan 0001 00:00:00 +0000
 		// Wed, 10 Mar 2021 00:00:00 +0000
-		layout := "Mon, 01 Jan 0001 00:00:00 +0000"
+		layout := "Mon, 02 Jan 2006 15:04:05 -0700"
 
 		date, _ := time.Parse(layout, item.PubDate)
 

@@ -47,6 +47,7 @@ func main()  {
 	comMap.Register("follow", middlewareLoggedIn(follow))
 	comMap.Register("following", middlewareLoggedIn(following))
 	comMap.Register("unfollow", middlewareLoggedIn(unfollow))
+	comMap.Register("browse", middlewareLoggedIn(handlerBrowse))
 	
 	if len(os.Args) < 2 {
 		log.Fatal("not enough arguments")
